@@ -114,13 +114,6 @@ class DiffractionData:
         plt.show()
 
 if __name__ == "__main__":
-    a = DiffractionData("11.5.jpg", True, slit_width=0.5e-3)
-    a.plot_picture_data()
-    a.new_image("11.25.jpg", True, slit_width=0.75e-3)
-    a.plot_picture_data()
-    a.new_image("11.00.jpg", True, slit_width=1e-3)
-    a.plot_picture_data()
-    a.new_image("10.5.jpg", True, slit_width=1.5e-3)
-    a.plot_picture_data()
-    a.new_image("10.jpg", True, slit_width=2e-3)
-    a.plot_picture_data()
+    foo = DiffractionData("example-photos//11.25.jpg", True, slit_width=0.5e-3)
+    foo.plot_picture_data()
+    
