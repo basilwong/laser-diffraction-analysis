@@ -6,12 +6,20 @@ import scipy.integrate
 class DiffractionData:
 
     def __init__(self, image_name, isrgb, wavelength=632.8 * 10 ** (-9), slit_width=0.5 * 10 ** (-3), R=3.64, pic_width=0.05):
-        """
-        """
         self.new_image(image_name, isrgb, wavelength, slit_width, R)
 
     def new_image(self, image_name, isrgb, wavelength=632.8 * 10 ** (-9), slit_width=0.5 * 10 ** (-3), R=3.64, pic_width=0.05):
         """
+        Initialization function.
+        :param image_name: Path to the picture of the laser diffraction on a
+            screen as a string
+        :param isrgb: Booleann whether the picture is in color(True) or
+            greyscale(False)
+        :param wavelength: Wavelength of the laser in meters
+        :param slit_width: Width of the slit in meters
+        :param R: Distance from the slit aperture to the screen
+        :param pic_width: Scaling coefficient for taking into account the zoom
+            and disfigurement of the picture.
         """
         self.image_name = image_name
         self.isrgb = isrgb
@@ -35,7 +43,7 @@ class DiffractionData:
 
     def __rgb_2_gray(self, rgb):
         """
-
+        Function for converting color images to greyscale images.
         """
         r, g, b = rgb[:,:,0], rgb[:,:,1], rgb[:,:,2]
         gray = 0.2989 * r + 0.5870 * g + 0.1140 * b
@@ -43,6 +51,8 @@ class DiffractionData:
 
     def __get_intensity(self):
         """
+        Function for obtaining the intensity spectrum as an array from the
+        image.
         """
         img = cv2.imread(self.image_name)
         if self.isrgb:
@@ -51,11 +61,20 @@ class DiffractionData:
             return img
 
     def __shift_intensity(self):
+        """
+        Function that adjusts the position of the intensity spectrum so the peak
+        is in the middle for proper comparison to the Fraunhofer and Fresnel
+        Diffraction models.
+        """
         self.start = np.abs(int(len(self.image_intensity) / 2) - self.max_index)
         self.shifted = self.image_intensity[int(self.start):]
 
     def __get_fraunhoffer(self):
-
+        """
+        Function for obtaining the Fraunhofer diffraction model from the input
+        experimental settings including the wavelength, slit width and distance
+        from the slit aperture to the screen.
+        """
         max_angle = np.arctan(self.pic_width / self.R)
         k = 2.0 * np.pi / self.wavelength
         intensity = list()
@@ -74,6 +93,11 @@ class DiffractionData:
         return intensity
 
     def __get_fresnel(self):
+        """
+        Function for obtaining the Fresnel diffraction model from the input
+        experimental settings including the wavelength, slit width and distance
+        from the slit aperture to the screen.
+        """
 
         max_angle = np.arctan(self.pic_width / self.R)
         S = lambda x:np.sin(x**2 * np.pi / 2)
@@ -94,6 +118,8 @@ class DiffractionData:
 
     def plot_picture_data(self):
         """
+        Function plotting the intensity spectrum from the experimental data,
+        the Fresnel Diffraction Model, and the Fraunhofer Diffraction model.
         """
 
         x  = np.linspace(0, self.num , self.num)
@@ -116,4 +142,3 @@ class DiffractionData:
 if __name__ == "__main__":
     foo = DiffractionData("example-photos//11.25.jpg", True, slit_width=0.5e-3)
     foo.plot_picture_data()
-    
